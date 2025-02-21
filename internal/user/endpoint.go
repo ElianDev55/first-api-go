@@ -32,8 +32,11 @@ type (
 		Email 			*string `json:"emial"`
 		Phone 			*string `json:"phone"`
 	}
-	ErrorResponse struct {
-		Error string `json:"error"`
+
+	Response struct {
+		Status	 int   					`json:"status"` 
+		Data 		interface{} 		`json:"data,omitempty"`
+		Err 		string					`json:"error,omitempty"`
 	}
 
 )
@@ -58,16 +61,18 @@ func makeCreateEnpoint(s Service) Controller {
 
 		if err != nil {
 			w.WriteHeader(400)
-			json.NewEncoder(w).Encode(ErrorResponse{
-				Error: "Invalid request format",
+			json.NewEncoder(w).Encode(&Response{
+				Status: 400,
+				Err: err.Error(),
 			})
 			return
 		}
 
 		if rq.FirstName == "" {
 			w.WriteHeader(400)
-			json.NewEncoder(w).Encode(ErrorResponse{
-				Error: "first name is required",
+			json.NewEncoder(w).Encode(&Response{
+				Status: 400,
+				Err: "first name is required",
 			})
 			return
 		}
@@ -76,13 +81,17 @@ func makeCreateEnpoint(s Service) Controller {
 
 		if error != nil {
 				w.WriteHeader(400)
-				json.NewEncoder(w).Encode(ErrorResponse{
-				Error: error.Error(),
+				json.NewEncoder(w).Encode(&Response{
+				Status: 400,
+				Err: error.Error(),
 			})
 			return
 		}
 
-			json.NewEncoder(w).Encode(user)
+			json.NewEncoder(w).Encode(&Response{
+				Status: 200,
+				Data: user,
+			})
 	}
 }
 
@@ -93,13 +102,18 @@ func makeGetAllEnpoint(s Service) Controller {
 
 		if err != nil {
 				w.WriteHeader(400)
-				json.NewEncoder(w).Encode(ErrorResponse{
-				Error: err.Error(),
+				json.NewEncoder(w).Encode(&Response{
+				Status: 400,
+				Err: err.Error(),
 			})
 			return
 		}
 
-			json.NewEncoder(w).Encode(users)
+		
+			json.NewEncoder(w).Encode(&Response{
+				Status: 200,
+				Data: users,
+			})
 	}
 }
 func makeGetEnpoint(s Service) Controller {
@@ -111,13 +125,17 @@ func makeGetEnpoint(s Service) Controller {
 
 		if err != nil {
 				w.WriteHeader(400)
-				json.NewEncoder(w).Encode(ErrorResponse{
-				Error: err.Error(),
+				json.NewEncoder(w).Encode(&Response{
+				Status: 400,
+				Err: err.Error(),
 			})
 			return
 		}
 
-			json.NewEncoder(w).Encode(user)
+			json.NewEncoder(w).Encode(&Response{
+				Status: 200,
+				Data: user,
+			})
 	}
 }
 func makeUpdateEnpoint(s Service) Controller {
@@ -129,15 +147,19 @@ func makeUpdateEnpoint(s Service) Controller {
 
 		if err != nil {
 			w.WriteHeader(400)
-			json.NewEncoder(w).Encode(ErrorResponse{
-				Error: "Invalid request format",
+			json.NewEncoder(w).Encode(&Response{
+				Status: 400,
+				Err: "Invalided request",
 			})
 			return
 		}
 
 		if rq.FirstName != nil && *rq.FirstName == "" {
     w.WriteHeader(400)
-    json.NewEncoder(w).Encode(ErrorResponse{"first name is required"})
+    json.NewEncoder(w).Encode(&Response{
+				Status: 400,
+				Err: "first name is required",
+			})
     return
 	}
 
@@ -148,8 +170,9 @@ func makeUpdateEnpoint(s Service) Controller {
 
 		if erro != nil {
 				w.WriteHeader(400)
-				json.NewEncoder(w).Encode(ErrorResponse{
-				Error: err.Error(),
+				json.NewEncoder(w).Encode(&Response{
+				Status: 400,
+				Err: erro.Error(),
 			})
 			return
 		}
@@ -168,8 +191,9 @@ func makeDeleteEnpoint(s Service) Controller {
 
 		if err != nil {
 				w.WriteHeader(400)
-				json.NewEncoder(w).Encode(ErrorResponse{
-				Error: err.Error(),
+				json.NewEncoder(w).Encode(&Response{
+				Status: 400,
+				Err:  err.Error(),
 			})
 			return
 		}
