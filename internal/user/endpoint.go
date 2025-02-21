@@ -98,8 +98,14 @@ func makeCreateEnpoint(s Service) Controller {
 func makeGetAllEnpoint(s Service) Controller {
 	return func (w http.ResponseWriter, r *http.Request) {
 
-		users, err := s.GetAll()
+		q := r.URL.Query()
 
+		filters := Filterts{
+			FirstName: q.Get("first_name"),
+			LastName:  q.Get("last_name"),
+		}
+
+		users, err := s.GetAll(filters)
 		if err != nil {
 				w.WriteHeader(400)
 				json.NewEncoder(w).Encode(&Response{

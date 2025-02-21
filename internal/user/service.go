@@ -3,18 +3,26 @@ package user
 import "log"
 
 
-type Service interface {
+type (
+	service struct {
+	log *log.Logger
+	repo Repository
+}
+
+	Service interface {
 	Create(firstName, lastName, email, phone string) (*User, error)
-	GetAll()([]User, error)
+	GetAll(filters Filterts)([]User, error)
 	Get(id string)(*User, error)
 	Update(id string, firstName *string, lastName *string, email *string, phone *string) error
 	Delete(id string) error
 }
-
-type service struct {
-	log *log.Logger
-	repo Repository
+Filterts struct {
+	FirstName string
+	LastName string
 }
+
+) 
+
 
 func NewService(log *log.Logger, repo Repository) Service{
 	return &service{
@@ -40,10 +48,10 @@ func (s service) Create(firstName, lastName, email, phone string) (*User, error)
 	return &user, nil
 }
 
-func (s service) GetAll() ([]User, error)  {
+func (s service) GetAll(filters Filterts) ([]User, error)  {
 	s.log.Println("GetAll user service")
 	
-	users,err := s.repo.GetAll()
+	users,err := s.repo.GetAll(filters)
 
 	if err != nil {
 		return nil, err
