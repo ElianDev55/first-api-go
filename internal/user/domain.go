@@ -1,6 +1,10 @@
 package user
 
-import "time"
+import (
+	"time"
+
+	"gorm.io/gorm"
+)
 
 type User struct {
     ID        string     `json:"id" gorm:"type:char(36);not null;primary_key;unique"`
@@ -10,4 +14,5 @@ type User struct {
     Phone     string     `json:"phone" gorm:"type:char(30);not null"`
     CreatedAt *time.Time `json:"-"` 
     UpdatedAt *time.Time `json:"-"`
+    Deleted    gorm.DeletedAt `json:"-"`
 }

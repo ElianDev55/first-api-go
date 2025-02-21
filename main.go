@@ -21,6 +21,7 @@ func main() {
 	
 	router := mux.NewRouter()
 	_ = godotenv.Load()
+	l := log.New(os.Stdout, "", log.LstdFlags|log.Lshortfile)
 	
 
 	host := os.Getenv("DB_HOST")
@@ -39,13 +40,15 @@ func main() {
 	}
 
 
-	userService := user.NewService()
+	userRepo := user.NewRepo(l,db)
+	userService := user.NewService(l,userRepo)
 	userEnd := user.MakeEndPoints(userService)
 	
-	router.HandleFunc("/users", userEnd.Create).Methods("GET")
+	router.HandleFunc("/users", userEnd.GetAll).Methods("GET")
+	router.HandleFunc("/users/{id}", userEnd.Get).Methods("GET")
 	router.HandleFunc("/users", userEnd.Create).Methods("POST")
-	router.HandleFunc("/users", userEnd.Update).Methods("PATCH")
-	router.HandleFunc("/users", userEnd.Delete).Methods("DELETE")
+	router.HandleFunc("/users/{id}", userEnd.Update).Methods("PATCH")
+	router.HandleFunc("/users/{id}", userEnd.Delete).Methods("DELETE")
 
 
 	srv := &http.Server{
