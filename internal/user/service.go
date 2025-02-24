@@ -11,10 +11,11 @@ type (
 
 	Service interface {
 	Create(firstName, lastName, email, phone string) (*User, error)
-	GetAll(filters Filterts)([]User, error)
+	GetAll(filters Filterts, offset, limit int)([]User, error)
 	Get(id string)(*User, error)
 	Update(id string, firstName *string, lastName *string, email *string, phone *string) error
 	Delete(id string) error
+	Count(filters Filterts) (int, error)
 }
 Filterts struct {
 	FirstName string
@@ -48,10 +49,10 @@ func (s service) Create(firstName, lastName, email, phone string) (*User, error)
 	return &user, nil
 }
 
-func (s service) GetAll(filters Filterts) ([]User, error)  {
+func (s service) GetAll(filters Filterts, offset, limit int) ([]User, error)  {
 	s.log.Println("GetAll user service")
 	
-	users,err := s.repo.GetAll(filters)
+	users,err := s.repo.GetAll(filters,offset,limit)
 
 	if err != nil {
 		return nil, err
@@ -96,4 +97,10 @@ func (s service) Delete(id string) error  {
 	}
 
 	return nil
+}
+
+func (s service) Count(filters Filterts) (int, error) {
+
+	return s.repo.Count(filters)
+
 }
