@@ -1,6 +1,10 @@
 package user
 
-import "log"
+import (
+	"log"
+
+	"github.com/ElianDev55/first-api-go/internal/domain"
+)
 
 
 type (
@@ -10,9 +14,9 @@ type (
 }
 
 	Service interface {
-	Create(firstName, lastName, email, phone string) (*User, error)
-	GetAll(filters Filterts, offset, limit int)([]User, error)
-	Get(id string)(*User, error)
+	Create(firstName, lastName, email, phone string) (*domain.User, error)
+	GetAll(filters Filterts, offset, limit int)([]domain.User, error)
+	Get(id string)(*domain.User, error)
 	Update(id string, firstName *string, lastName *string, email *string, phone *string) error
 	Delete(id string) error
 	Count(filters Filterts) (int, error)
@@ -32,9 +36,9 @@ func NewService(log *log.Logger, repo Repository) Service{
 	}
 }
 
-func (s service) Create(firstName, lastName, email, phone string) (*User, error)  {
+func (s service) Create(firstName, lastName, email, phone string) (*domain.User, error)  {
 	s.log.Println("Create user service")
-	user := User{
+	user := domain.User{
 		FirstName: firstName,
 		LastName: lastName,
 		Email: email,
@@ -49,7 +53,7 @@ func (s service) Create(firstName, lastName, email, phone string) (*User, error)
 	return &user, nil
 }
 
-func (s service) GetAll(filters Filterts, offset, limit int) ([]User, error)  {
+func (s service) GetAll(filters Filterts, offset, limit int) ([]domain.User, error)  {
 	s.log.Println("GetAll user service")
 	
 	users,err := s.repo.GetAll(filters,offset,limit)
@@ -62,7 +66,7 @@ func (s service) GetAll(filters Filterts, offset, limit int) ([]User, error)  {
 }
 
 
-func (s service) Get(id string) (*User, error)  {
+func (s service) Get(id string) (*domain.User, error)  {
 	s.log.Println("Get user service")
 	
 	user,err := s.repo.Get(id)

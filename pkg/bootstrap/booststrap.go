@@ -5,7 +5,7 @@ import (
 	"log"
 	"os"
 
-	"github.com/ElianDev55/first-api-go/internal/user"
+	"github.com/ElianDev55/first-api-go/internal/domain"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
@@ -39,10 +39,21 @@ func DBConnection() (*gorm.DB, error) {
 	}
 
 	if  AutoMigrate == "true" {
-		err := db.AutoMigrate(&user.User{})
-		if err != nil {
-			return nil,err
+		errUser := db.AutoMigrate(&domain.User{})
+		if errUser != nil {
+			return nil,errUser
 		}
+
+		errCour := db.AutoMigrate(&domain.Course{})
+		if errCour != nil {
+			return nil,errCour
+		}
+		
+		errEnroll := db.AutoMigrate(&domain.Enrollment{})
+		if errEnroll != nil {
+			return nil,errEnroll
+		}
+
 	}
 
 	return db, nil

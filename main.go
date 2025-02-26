@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/ElianDev55/first-api-go/internal/course"
 	"github.com/ElianDev55/first-api-go/internal/user"
 	"github.com/ElianDev55/first-api-go/pkg/bootstrap"
 	"github.com/gorilla/mux"
@@ -33,10 +34,21 @@ func main() {
 	userEnd := user.MakeEndPoints(userService)
 	
 	router.HandleFunc("/users", userEnd.GetAll).Methods("GET")
-	router.HandleFunc("/users/{id}", userEnd.Get).Methods("GET")
 	router.HandleFunc("/users", userEnd.Create).Methods("POST")
+	router.HandleFunc("/users/{id}", userEnd.Get).Methods("GET")
 	router.HandleFunc("/users/{id}", userEnd.Update).Methods("PATCH")
 	router.HandleFunc("/users/{id}", userEnd.Delete).Methods("DELETE")
+
+	courseRepo := course.NewRepo(l,db)
+	courseService := course.NewService(l,courseRepo)
+	courseEnd := course.MakeEndPoints(courseService)
+
+	router.HandleFunc("/courses", courseEnd.Create).Methods("POST")
+	router.HandleFunc("/courses", courseEnd.GetAll).Methods("GET")
+	router.HandleFunc("/courses/{id}", courseEnd.Get).Methods("GET")
+	router.HandleFunc("/courses/{id}", courseEnd.Update).Methods("PATCH")
+	router.HandleFunc("/courses/{id}", courseEnd.Delete).Methods("DELETE")
+
 
 
 	srv := &http.Server{
