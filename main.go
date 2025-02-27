@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/ElianDev55/first-api-go/internal/course"
+	"github.com/ElianDev55/first-api-go/internal/enrollment"
 	"github.com/ElianDev55/first-api-go/internal/user"
 	"github.com/ElianDev55/first-api-go/pkg/bootstrap"
 	"github.com/gorilla/mux"
@@ -49,6 +50,13 @@ func main() {
 	router.HandleFunc("/courses/{id}", courseEnd.Update).Methods("PATCH")
 	router.HandleFunc("/courses/{id}", courseEnd.Delete).Methods("DELETE")
 
+
+	enrollmentRepo := enrollment.NewRepo(l,db)
+	enrollmenService := enrollment.NewService(l,enrollmentRepo)
+	enrollmenEnd := enrollment.MakeEndPoints(enrollmenService)
+
+	router.HandleFunc("/enrollments", enrollmenEnd.Create).Methods("POST")
+	router.HandleFunc("/enrollments", enrollmenEnd.GetAll).Methods("GET")
 
 
 	srv := &http.Server{
